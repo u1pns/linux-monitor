@@ -1,4 +1,8 @@
 /**
+ * DISCLAIMER: This cleaner script is an example tailored to a specific environment.
+ * It may not be applicable to your installation. If you don't use PM2 telemetry logs,
+ * you can safely delete this file or add `return;` at the beginning of the script.
+ *
  * Cleaner: Telemetry Log
  *
  * This script checks the size of the PM2 telemetry log file. If the file exceeds

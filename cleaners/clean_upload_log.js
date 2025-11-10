@@ -1,4 +1,8 @@
 /**
+ * DISCLAIMER: This cleaner script is an example tailored to a specific environment.
+ * It may not be applicable to your installation. If you don't use /root/upload/log.txt,
+ * you can safely delete this file or add `return;` at the beginning of the script.
+ *
  * Cleaner: Upload Log
  *
  * This script checks the size of the log file located at /root/upload/log.txt.
