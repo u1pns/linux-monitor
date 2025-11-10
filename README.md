@@ -2,7 +2,6 @@
 
 A lightweight, stateful, and extensible server monitoring system designed for unattended operation. It silently watches your server and only notifies you about *new* issues, while also performing automated maintenance to prevent common problems.
 
-[![Node.js CI](https://github.com/your-repo/actions/workflows/node.js.yml/badge.svg)](https://github.com/your-repo/actions/workflows/node.js.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Core Philosophy
