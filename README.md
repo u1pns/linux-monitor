@@ -125,3 +125,25 @@ This system is designed to be incredibly easy to extend. You don't need to modif
 ├── .env                # (You create this) Holds all secrets
 └── .env.example        # Example environment file
 ```
+
+---
+
+## Development Context & Requirements
+
+### About GEMINI.md
+
+This project was developed with significant assistance from the Gemini CLI. The `GEMINI.md` file is a log of the architectural decisions, diagnostic protocols, and core logic developed during the project's creation. It serves as a detailed technical reference for the project's internal workings.
+
+### Environment
+
+The system was developed and tested on an **Ubuntu** server with the following key services installed. While the monitors can be adapted, they are currently tailored for this environment:
+
+-   **PM2**: For managing Node.js applications. The `pm2_status` and `pm2_errors` monitors depend on it.
+-   **Nginx**: As a web server. The `nginx_errors` monitor depends on it.
+-   **Fail2Ban**: For blocking malicious IPs. The `ip_blocks` monitor depends on it.
+
+### Requirements
+
+-   **Node.js**: Version `v22.20.0` or higher is recommended.
+-   **npm**: Version `10.9.3` or higher is recommended.
+-   **Cron**: A cron daemon must be running on the system to schedule the daily execution.

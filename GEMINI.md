@@ -93,12 +93,36 @@ To ensure the system is silently working, `alerts.js` manages a status file: `mo
 
 ---
 
-## 7. Protocolo de Diagnóstico
+## 7. Development Environment & Portability
+
+This system was developed and tested on a specific server environment. While the core logic is portable, many of the monitor scripts are tailored to the services and log paths of this environment.
+
+### 7.1. Server Configuration
+
+-   **Operating System**: Ubuntu
+-   **Key Services**:
+    -   **PM2**: Used for managing Node.js applications. The `pm2_status.js` and `pm2_errors.js` monitors depend on its presence and log paths (`/root/.pm2/logs/`).
+    -   **Nginx**: Used as a web server. The `nginx_errors.js` monitor queries its logs via `journalctl`.
+    -   **Fail2Ban**: Used for blocking malicious IPs. The `ip_blocks.js` monitor depends on its log file (`/var/log/fail2ban.log`).
+    -   **Systemd/Journald**: The primary logging system. Many monitors (`intrusion_attempts.js`, `nginx_errors.js`, `sudo_activity.js`, `system_log_errors.js`) rely on `journalctl` to query logs.
+
+### 7.2. Adapting to Other Systems
+
+When deploying this project on a different server, it is crucial to review the scripts in the `monitors/` and `cleaners/` directories:
+
+-   **Check Service Dependencies**: If a service like PM2 or Nginx is not installed, the corresponding monitor will fail or produce no output. These monitor files should be **deleted** or adapted.
+-   **Verify Log Paths**: Some scripts contain hardcoded paths to log files (e.g., `/var/log/fail2ban.log`). If your system stores logs in a different location, you must update the paths in the relevant scripts.
+-   **Review Commands**: The scripts use standard Linux commands (`df`, `vmstat`, `journalctl`). If your OS uses different commands or flags, the scripts will need to be adjusted.
+-   **Add or Remove Scripts**: The modular nature of this project makes it easy to add new monitors for services on your specific server or remove those that are not applicable.
+
+---
+
+## 8. Protocolo de Diagnóstico
 
 When a problem is reported, follow these steps systematically:
 
 1.  **Check the Logs:** Inspect `alerts.log` and `cleaners.log` first. They record the execution flow, the output of each script, and any errors.
-2.  **Consult This Document:** Reread the "Orchestration Flow" section in this file to understand how the different components interact.
+2.  **Consult This Document:** Reread the "Orchestration Flow" and "Development Environment" sections in this file to understand how the components interact and what their dependencies are.
 3.  **Form a Hypothesis:** Based on the flow, identify the likely source. (e.g., "No emails are being sent" -> check `alerts.log` for errors or heartbeat status. "A log file is too big" -> check `cleaners.log` to see if the relevant cleaner ran).
 4.  **Investigate the Source:** Use tools (`read_file`, `ls`) to inspect the files involved (`alerts.txt`, a specific monitor, a `.status` file, etc.).
 5.  **Ask the User as a Last Resort:** Only ask for information if it's impossible to diagnose from the project files (e.g., to confirm the external reception of an email).
