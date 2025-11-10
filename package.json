@@ -1,0 +1,22 @@
+{
+  "name": "monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "alerts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mailtest": "node alerts.js --test"
+  },
+  "keywords": [
+    "server",
+    "monitor",
+    "alerts"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "marked": "^11.0.0",
+    "nodemailer": "^7.0.10"
+  }
+}
