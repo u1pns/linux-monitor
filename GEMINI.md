@@ -61,7 +61,7 @@ To ensure the system is silently working, `alerts.js` manages a status file: `mo
 
 1.  Create a new JavaScript file (e.g., `my_new_check.js`) inside the `monitors/` directory.
 2.  The script **must** adhere to three rules:
-    1.  **Be Stateful:** It must save its last reported state (e.g., in a file within `monitors/laststatus/`). It should only generate an alert if the current state is different from the last saved state.
+    1.  **Be Stateful:** It must save its last reported state (e.g., in a file within `monitors/laststatus/`). It should only generate an alert if the current state is different from the last saved state. For monitors that scan logs, this statefulness should ideally be based on time. The monitor should record the timestamp of its last execution and use it to query logs only *since that last run*. This prevents re-scanning old data and makes the monitor more efficient and resilient to frequency changes.
     2.  **Use Markdown:** Any alert written to `monitors/alerts.txt` must be in Markdown format, starting with a level-two heading (`## My New Check`).
     3.  **Output Alert Count:** The script's final action must be to print the number of new alerts it generated to standard output (e.g., `console.log(1)` or `console.log(0)`). This is crucial for logging.
 3.  No further configuration is needed. `alerts.js` will automatically pick it up on its next run.

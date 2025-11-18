@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
 
 const cleanersDir = path.join(__dirname, 'cleaners');
 const logFile = path.join(__dirname, 'cleaners.log');
@@ -13,37 +13,30 @@ function log(message) {
 try {
   log('Starting cleaners script...');
 
-  fs.readdir(cleanersDir, (err, files) => {
-    if (err) {
-      log(`Error reading cleaners directory: ${err}`);
-      return;
-    }
+  const files = fs.readdirSync(cleanersDir);
+  const cleanerFiles = files.filter(file => file.endsWith('.js'));
 
-    const cleanerFiles = files.filter(file => file.endsWith('.js'));
-
-    if (cleanerFiles.length === 0) {
-      log('No cleaners found to execute.');
-      return;
-    }
-
+  if (cleanerFiles.length === 0) {
+    log('No cleaners found to execute.');
+  } else {
     cleanerFiles.forEach(file => {
       log(`Executing cleaner: ${file}`);
       const filePath = path.join(cleanersDir, file);
-      exec(`node ${filePath}`, (error, stdout, stderr) => {
-        if (error) {
-          log(`Error executing ${file}: ${error.message}`);
-        }
-        if (stderr) {
-          log(`Error output from ${file}: ${stderr}`);
-        }
-        if (stdout) {
-          log(`Output from ${file}: ${stdout.trim()}`);
+      try {
+        const output = execSync(`node ${filePath}`, { encoding: 'utf8' });
+        if (output.trim()) {
+          log(`Output from ${file}: ${output.trim()}`);
         }
         log(`Cleaner ${file} finished.`);
-      });
+      } catch (error) {
+        log(`Error executing ${file}: ${error.message}`);
+        if (error.stderr) {
+          log(`Error output from ${file}: ${error.stderr.trim()}`);
+        }
+      }
     });
-  });
+  }
 } catch (error) {
-  log(`Unhandled error in cleaners.js: ${error}`);
+  log(`Unhandled error in cleaners.js: ${error.message}`);
 }
 
