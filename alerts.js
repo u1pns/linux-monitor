@@ -57,6 +57,7 @@ async function sendEmail(subject, content, isTest = false) {
         mailOptions.text = content;
         mailOptions.html = marked(content, { breaks: true });
 
+        log(`Attempting to send email via ${emailConfig.host}:${emailConfig.port} to ${mailOptions.to}`);
         const info = await transporter.sendMail(mailOptions);
         log(`Email sent: ${info.response}`);
         console.log('Email sent: ' + info.response);

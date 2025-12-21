@@ -9,7 +9,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Define the cron job command and schedule
 CRON_COMMAND=""${DIR}/run_daily.js""
 CRON_SCHEDULE="0 8 * * *"
-CRON_JOB="${CRON_SCHEDULE} /usr/bin/node ${CRON_COMMAND}"
+CRON_JOB="${CRON_SCHEDULE} cd ${DIR} && /usr/bin/node run_daily.js"
 
 # Check if the cron job already exists
 # Use grep -F for fixed string matching and -q for quiet mode
