@@ -13,3 +13,4 @@ monitors/laststatus/
 # Backup files
 *.tar.gz
 *.zip
+monitors/alerts.txt

@@ -116,6 +116,11 @@ This system is designed to be incredibly easy to extend. You don't need to modif
 │
 ├── monitors/           # Directory for all monitoring scripts
 │   ├── disk_space.js
+│   ├── security_config.js # Audits firewall, fail2ban, and SSH config
+│   ├── security_updates.js # Checks for pending security updates
+│   ├── unwanted_services.js # Alerts on risky services (Samba, etc.)
+│   ├── suid_check.js   # Detects new SUID binaries
+│   ├── open_ports.js   # Detects new listening ports
 │   └── laststatus/     # Directory for monitor state files
 │
 ├── cleaners/           # Directory for all maintenance scripts
@@ -141,6 +146,7 @@ The system was developed and tested on an **Ubuntu** server with the following k
 -   **PM2**: For managing Node.js applications. The `pm2_status` and `pm2_errors` monitors depend on it.
 -   **Nginx**: As a web server. The `nginx_errors` monitor depends on it.
 -   **Fail2Ban**: For blocking malicious IPs. The `ip_blocks` monitor depends on it.
+-   **UFW**: As a firewall. Configured with rate limiting for SSH (port 2222).
 
 ### Requirements
 

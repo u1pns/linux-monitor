@@ -84,9 +84,14 @@ To ensure the system is silently working, `alerts.js` manages a status file: `mo
 -   `cleaners.log`: Log file for the maintenance system.
 -   `monitors/`: Directory for all monitoring scripts.
     -   `disk_space.js`, `cpu_load.js`, etc.
+    -   `security_config.js`: Audits basic security settings (UFW, Fail2Ban, SSH).
+    -   `security_updates.js`: Monitors for pending Ubuntu security updates.
+    -   `unwanted_services.js`: Monitors for risky/unnecessary services.
+    -   `suid_check.js`: Scans for new SUID binaries.
+    -   `open_ports.js`: Monitors for new listening ports.
     -   `alerts.txt`: Temporary file for collecting alerts during a run.
     -   `laststatus/`: Directory for state files.
-        -   `disk_space.status`, `ip_blocks.status`, etc.
+        -   `disk_space.status`, `suid_files.status`, `open_ports.status`, etc.
         -   `last_email_sent.status`: Timestamp for the heartbeat mechanism.
 -   `cleaners/`: Directory for all maintenance scripts.
     -   `journal_vacuum.js`, `clean_telemetry_log.js`, etc.
@@ -104,6 +109,7 @@ This system was developed and tested on a specific server environment. While the
     -   **PM2**: Used for managing Node.js applications. The `pm2_status.js` and `pm2_errors.js` monitors depend on its presence and log paths (`/root/.pm2/logs/`).
     -   **Nginx**: Used as a web server. The `nginx_errors.js` monitor queries its logs via `journalctl`.
     -   **Fail2Ban**: Used for blocking malicious IPs. The `ip_blocks.js` monitor depends on its log file (`/var/log/fail2ban.log`).
+    -   **UFW (Uncomplicated Firewall)**: Used for network security. Configured with rate limiting (`limit`) on the SSH port (2222) to mitigate brute-force attacks.
     -   **Systemd/Journald**: The primary logging system. Many monitors (`intrusion_attempts.js`, `nginx_errors.js`, `sudo_activity.js`, `system_log_errors.js`) rely on `journalctl` to query logs.
 
 ### 7.2. Adapting to Other Systems
