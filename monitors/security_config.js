@@ -21,7 +21,7 @@ let issues = [];
 // 1. Check UFW (Firewall)
 try {
     // Check if UFW is installed and active
-    const ufwStatus = execSync('ufw status 2>/dev/null || echo "not found"', { encoding: 'utf8' }).trim();
+    const ufwStatus = execSync('/usr/sbin/ufw status 2>/dev/null || echo "not found"', { encoding: 'utf8' }).trim();
     if (ufwStatus === 'not found') {
         issues.push('- **Firewall (UFW)**: Command not found. Is a firewall installed?');
     } else if (!ufwStatus.toLowerCase().includes('status: active')) {
