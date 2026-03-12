@@ -35,6 +35,9 @@ exec(command, (error, stdout, stderr) => {
         if (!fs.existsSync(stateFile) || fs.readFileSync(stateFile, 'utf8') !== errorMessage) {
             fs.appendFileSync(alertsFile, "## Disk Space Monitor Error\n" + errorMessage);
             fs.writeFileSync(stateFile, errorMessage);
+            console.log(1);
+        } else {
+            console.log(0);
         }
         return;
     }

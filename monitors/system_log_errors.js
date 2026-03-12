@@ -33,6 +33,7 @@ const command = "journalctl -p 0..2 --no-pager";
 
 exec(command, (error, stdout, stderr) => {
     if (error || stderr) {
+        console.log(0);
         return; // Handle command failure
     }
 
@@ -48,6 +49,7 @@ exec(command, (error, stdout, stderr) => {
     const newUniqueLines = [...new Set(currentLogLines.filter(line => !lastReportedLines.includes(line)))];
 
     if (newUniqueLines.length === 0) {
+        console.log(0);
         return; // No new errors to process
     }
 

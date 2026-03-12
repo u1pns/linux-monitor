@@ -29,6 +29,7 @@ const command = "free -m | grep Mem:";
 
 exec(command, (error, stdout, stderr) => {
     if (error || stderr) {
+        console.log(0);
         return;
     }
 

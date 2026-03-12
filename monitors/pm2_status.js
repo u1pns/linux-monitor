@@ -30,6 +30,7 @@ const command = "pm2 jlist";
 exec(command, (error, stdout, stderr) => {
     if (error) {
         // PM2 might not be running, which is not an error to report.
+        console.log(0);
         return;
     }
 
