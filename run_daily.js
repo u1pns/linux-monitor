@@ -10,7 +10,10 @@ function runScript(scriptName) {
         console.log(`--- Running ${scriptName} ---`);
         const scriptPath = path.join(__dirname, scriptName);
         // Use 'inherit' to show the output of the child script in real-time.
-        execSync(`node ${scriptPath}`, { stdio: 'inherit' });
+        // process.execPath (absolute node binary) instead of bare 'node': cron's
+        // PATH (/usr/bin:/bin) does not include /usr/local/bin (nvm), which made
+        // every run die with 'node: not found' from 2026-04-19 to 2026-06-10.
+        execSync(`"${process.execPath}" "${scriptPath}"`, { stdio: 'inherit' });
         console.log(`--- Finished ${scriptName} ---`);
     } catch (error) {
         // The error from the child process will be printed because of 'inherit'.

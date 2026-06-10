@@ -4,8 +4,8 @@
  * This monitor checks the disk space usage of the root filesystem.
  *
  * Strategy:
- * It uses the `df` command to get the percentage of disk space used.
- * An alert is triggered if the usage exceeds a predefined threshold (85%).
+ * It uses the `df` command to get the available disk space in GB.
+ * An alert is triggered if the available space drops below a predefined threshold (e.g., 2GB).
  *
  * State Management:
  * The script saves the last alert message to the `laststatus/disk_space.status` file.
@@ -13,20 +13,19 @@
  * the state file is updated with an empty string, and no new alert is sent until the
  * threshold is exceeded again. This prevents repeated notifications for the same event.
  */
-/**
- * Monitors disk space usage for the root partition (/). Generates an alert if
- * the usage exceeds 90%.
- * It is stateful and will only report on changes.
- */
 const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const alertsFile = path.join(__dirname, 'alerts.txt');
 const stateFile = path.join(__dirname, 'laststatus', 'disk_space.status');
-const usageThreshold = 85; // Alert if usage is over 85%
+const minAvailableGB = 3; // Alert if available space drops below this amount in GB (2GB on a 19GB disk warned too late)
 
-const command = "df --output=pcent / | tail -n 1 | tr -d ' %'";
+// df -B 1G / outputs sizes in 1GB blocks. 
+// Example output:
+// Filesystem     1G-blocks  Used Available Use% Mounted on
+// /dev/sda1            19G   11G        7G  61% /
+const command = "df -B 1G --output=avail / | tail -n 1 | tr -d 'G '";
 
 exec(command, (error, stdout, stderr) => {
     if (error || stderr) {
@@ -39,12 +38,11 @@ exec(command, (error, stdout, stderr) => {
         return;
     }
 
-    const usage = parseInt(stdout.trim(), 10);
+    const availableGB = parseInt(stdout.trim(), 10);
     let currentAlert = "";
 
-    if (!isNaN(usage) && usage > usageThreshold) {
-        currentAlert = `CRITICAL: Disk space usage is at ${usage}%, exceeding the threshold of ${usageThreshold}%.
-`;
+    if (!isNaN(availableGB) && availableGB < minAvailableGB) {
+        currentAlert = `CRITICAL: Disk space is running low. Only ${availableGB}GB available on the root partition (threshold is ${minAvailableGB}GB).\n`;
     }
 
     let lastAlert = "";

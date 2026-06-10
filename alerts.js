@@ -142,7 +142,8 @@ function runMonitoring() {
         monitorFiles.forEach(file => {
           log(`Executing monitor: ${file}`);
           const filePath = path.join(monitorsDir, file);
-          exec(`node ${filePath}`, (error, stdout, stderr) => {
+          // process.execPath: PATH-independent (cron has no /usr/local/bin)
+          exec(`"${process.execPath}" "${filePath}"`, (error, stdout, stderr) => {
             let alertCount = parseInt(stdout.trim(), 10) || 0;
     
             if (error) {

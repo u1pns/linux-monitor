@@ -23,7 +23,8 @@ try {
       log(`Executing cleaner: ${file}`);
       const filePath = path.join(cleanersDir, file);
       try {
-        const output = execSync(`node ${filePath}`, { encoding: 'utf8' });
+        // process.execPath: PATH-independent (cron has no /usr/local/bin)
+        const output = execSync(`"${process.execPath}" "${filePath}"`, { encoding: 'utf8' });
         if (output.trim()) {
           log(`Output from ${file}: ${output.trim()}`);
         }

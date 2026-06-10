@@ -9,7 +9,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Define the cron job command and schedule
 CRON_COMMAND=""${DIR}/run_daily.js""
 CRON_SCHEDULE="0 8 * * *"
-CRON_JOB="${CRON_SCHEDULE} cd ${DIR} && /usr/bin/node run_daily.js > /dev/null 2>&1"
+# Output goes to a logfile (NOT /dev/null): silent failures hid a dead monitor
+# for 8 weeks (node: not found, 2026-04-19 → 2026-06-10). A file redirect still
+# prevents cron from mailing output via the broken local postfix.
+CRON_JOB="${CRON_SCHEDULE} cd ${DIR} && /usr/local/bin/node run_daily.js >> ${DIR}/cron.log 2>&1"
 
 # Check if the cron job already exists
 # Use grep -F for fixed string matching and -q for quiet mode
