@@ -35,10 +35,13 @@ const fail2banLog = '/var/log/fail2ban.log';
 const command = `grep 'Ban' ${fail2banLog} | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}' | sort -u`;
 
 exec(command, (error, stdout, stderr) => {
-    if (error) { // This can happen if grep finds no matching lines.
-        if (fs.existsSync(stateFile)) {
+    if (error) {
+        // A grep exit code of 1 means no matches were found (no bans), which resets the state.
+        // Any other error code (e.g., log file not found) is a real error; preserve state.
+        if (error.code === 1 && fs.existsSync(stateFile)) {
             fs.unlinkSync(stateFile);
         }
+        console.log(0);
         return;
     }
 

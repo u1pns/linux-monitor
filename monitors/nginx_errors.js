@@ -50,18 +50,11 @@ exec(command, (error, stdout, stderr) => {
     const newErrors = currentErrors.filter(line => !lastErrors.includes(line));
 
     if (newErrors.length > errorThreshold) {
-        const recentErrorsSnippet = `echo "${newErrors.join('\n')}" | tail -n 20`;
-        exec(recentErrorsSnippet, (err, out) => {
-            let errorDetails = "Could not generate recent error snippet.";
-            if (!err) {
-                errorDetails = out.trim();
-            }
-
-            const alertMessage = `## Nginx Alert: ${newErrors.length} New Errors Detected\nRecent new errors:\n\`\`\`\n${errorDetails}\n\`\`\`\n\n`;
-            fs.appendFileSync(alertsFile, alertMessage);
-            fs.writeFileSync(stateFile, currentErrors.join('\n'));
-            console.log(1);
-        });
+        const errorDetails = newErrors.slice(-20).join('\n');
+        const alertMessage = `## Nginx Alert: ${newErrors.length} New Errors Detected\nRecent new errors:\n\`\`\`\n${errorDetails}\n\`\`\`\n\n`;
+        fs.appendFileSync(alertsFile, alertMessage);
+        fs.writeFileSync(stateFile, currentErrors.join('\n'));
+        console.log(1);
     } else {
         // If there are new errors but they are below the threshold, update the state to avoid re-alerting.
         if (newErrors.length > 0) {

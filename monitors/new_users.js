@@ -29,6 +29,7 @@ const command = "cut -d: -f1 /etc/passwd | sort";
 
 exec(command, (error, stdout, stderr) => {
     if (error || stderr) {
+        console.log(0);
         return; // Cannot get user list.
     }
 
@@ -37,6 +38,7 @@ exec(command, (error, stdout, stderr) => {
     if (!fs.existsSync(stateFile)) {
         // If this is the first run, just save the current state and exit.
         fs.writeFileSync(stateFile, currentUserList.join('\n'));
+        console.log(0);
         return;
     }
 
@@ -44,9 +46,7 @@ exec(command, (error, stdout, stderr) => {
     const newUsers = currentUserList.filter(user => !lastUserList.includes(user));
 
     if (newUsers.length > 0) {
-        const alertMessage = `## Security Alert: New User(s) Detected\n\nThe following new user accounts were detected on the system:\n\
-${newUsers.join('\n')}\
-\n`;
+        const alertMessage = `## Security Alert: New User(s) Detected\n\nThe following new user accounts were detected on the system:\n${newUsers.join('\n')}\n\n`;
         fs.appendFileSync(alertsFile, alertMessage);
 
         // Update the state file with the new complete list.

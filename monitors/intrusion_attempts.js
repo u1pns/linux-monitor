@@ -63,15 +63,19 @@ try {
         const newFailures = currentFailures.filter(line => !lastFailures.includes(line));
 
         if (newFailures.length > failureThreshold) {
-            const topIpCommand = `echo "${newFailures.join('\n')}" | grep -oP 'from \K[0-9.]+' | sort | uniq -c | sort -nr | head -n 5`;
-            
-            let topOffenders = 'Could not determine top offending IPs.';
-            try {
-                topOffenders = execSync(topIpCommand, { encoding: 'utf8' }).trim();
-            } catch (ipError) {
-                // Log the error but don't crash; proceed with a less detailed alert.
-                // This might happen if the grep pattern finds no IPs.
-            }
+            // Extract and count offending IPs using pure JavaScript to avoid shell injection.
+            const ipCounts = {};
+            newFailures.forEach(line => {
+                const match = line.match(/from ([0-9.]+)/);
+                if (match) {
+                    ipCounts[match[1]] = (ipCounts[match[1]] || 0) + 1;
+                }
+            });
+            const topOffenders = Object.entries(ipCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5)
+                .map(([ip, count]) => `${count} ${ip}`)
+                .join('\n') || 'Could not determine top offending IPs.';
 
             const alertMessage = `## Security Alert: ${newFailures.length} New Failed Logins\nTop new offending IPs:\n\`\`\`\n${topOffenders}\n\`\`\`\n\n`;
             fs.appendFileSync(alertsFile, alertMessage);
